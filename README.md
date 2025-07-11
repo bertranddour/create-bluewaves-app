@@ -15,6 +15,7 @@ npx create-bluewaves-app@latest my-dashboard --template dashboard
 ```
 
 That's it! Your app is ready with:
+
 - ✅ **Next.js 15** with App Router and TypeScript
 - ✅ **Surfer Design System** with OKLCH colors and performance optimizations
 - ✅ **shadcn/ui** with 25+ components pre-installed
@@ -29,31 +30,41 @@ That's it! Your app is ready with:
 Choose from our curated templates:
 
 ### 🚀 Minimal
+
 Clean setup with core components - perfect for starting fresh.
+
 ```bash
 npx create-bluewaves-app@latest my-app --template minimal
 ```
 
 ### 📊 Dashboard
+
 Admin interface with charts, tables, and metrics.
+
 ```bash
 npx create-bluewaves-app@latest my-dashboard --template dashboard
 ```
 
 ### 💼 SaaS
+
 Complete SaaS application with billing, auth, and user management.
+
 ```bash
 npx create-bluewaves-app@latest my-saas --template saas
 ```
 
 ### 🛍️ E-commerce
+
 Online store with product management and shopping cart.
+
 ```bash
 npx create-bluewaves-app@latest my-store --template ecommerce
 ```
 
 ### 🎯 Landing Page
+
 Marketing site optimized for conversions.
+
 ```bash
 npx create-bluewaves-app@latest my-landing --template landing
 ```
@@ -66,16 +77,16 @@ npx create-bluewaves-app@latest [project-name] [options]
 
 ### Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-t, --template <template>` | Template to use | `minimal` |
+| Option                       | Description                       | Default       |
+| ---------------------------- | --------------------------------- | ------------- |
+| `-t, --template <template>`  | Template to use                   | `minimal`     |
 | `-p, --package-manager <pm>` | Package manager (npm, pnpm, yarn) | Auto-detected |
-| `--use-npm` | Use npm | |
-| `--use-pnpm` | Use pnpm | |
-| `--use-yarn` | Use yarn | |
-| `--skip-install` | Skip package installation | |
-| `--skip-git` | Skip git initialization | |
-| `--verbose` | Enable verbose logging | |
+| `--use-npm`                  | Use npm                           |               |
+| `--use-pnpm`                 | Use pnpm                          |               |
+| `--use-yarn`                 | Use yarn                          |               |
+| `--skip-install`             | Skip package installation         |               |
+| `--skip-git`                 | Skip git initialization           |               |
+| `--verbose`                  | Enable verbose logging            |               |
 
 ### Examples
 
@@ -93,6 +104,7 @@ npx create-bluewaves-app@latest my-app --verbose
 ## 🏗️ What Gets Created
 
 ### Project Structure
+
 ```
 my-app/
 ├── src/
@@ -112,22 +124,26 @@ my-app/
 ### Dependencies Installed
 
 #### Core Framework
+
 - `next` - Next.js 15 with App Router
 - `react` & `react-dom` - React 19
 - `typescript` - TypeScript support
 
 #### Design System
+
 - `@bluewaves/surfer` - Surfer design system
 - `tailwindcss` - Tailwind CSS v4
 - `@tailwindcss/postcss` - PostCSS plugin
 
 #### UI Components
+
 - All shadcn/ui Radix dependencies
 - `lucide-react` - Icon library
 - `class-variance-authority` - Component variants
 - `clsx` & `tailwind-merge` - Utility functions
 
 #### Enhanced Features
+
 - `framer-motion` - Animations
 - `next-themes` - Theme switching
 - `sonner` - Toast notifications
@@ -136,12 +152,14 @@ my-app/
 ## 🎯 After Creation
 
 ### Start Development
+
 ```bash
 cd my-app
 npm run dev        # or pnpm dev / yarn dev
 ```
 
 ### Available Scripts
+
 ```bash
 npm run dev        # Start development server
 npm run build      # Build for production
@@ -150,6 +168,7 @@ npm run lint       # Run ESLint
 ```
 
 ### Surfer Commands
+
 ```bash
 # Add more components
 npx surfer add data-table
@@ -165,7 +184,9 @@ npx surfer analyze --performance
 ## 🎨 Customization
 
 ### Design Tokens
+
 Edit `surfer.config.json` to customize:
+
 ```json
 {
   "version": "1.0.0",
@@ -182,9 +203,11 @@ Edit `surfer.config.json` to customize:
 ```
 
 ### Components
+
 All shadcn/ui components are in `src/components/ui/` - modify as needed.
 
 ### Styling
+
 Global styles in `src/app/globals.css` with Surfer design system variables.
 
 ## 🚀 Performance
@@ -205,6 +228,7 @@ Your app is created with performance in mind:
 ## 🌟 Why create-bluewaves-app?
 
 ### vs create-next-app
+
 - ✅ Complete design system included
 - ✅ 25+ UI components pre-installed
 - ✅ Performance optimized out of the box
@@ -213,6 +237,7 @@ Your app is created with performance in mind:
 - ✅ Animations included
 
 ### vs Manual Setup
+
 - ✅ Saves hours of configuration
 - ✅ Best practices built-in
 - ✅ No decision fatigue
@@ -220,6 +245,7 @@ Your app is created with performance in mind:
 - ✅ Ready to ship
 
 ### vs Other Starters
+
 - ✅ Framework-specific optimizations
 - ✅ S-tier design system
 - ✅ Component ownership

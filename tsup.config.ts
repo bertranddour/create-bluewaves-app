@@ -10,7 +10,7 @@ export default defineConfig({
   minify: true,
   target: 'node18',
   banner: {
-    js: '#!/usr/bin/env node'
+    js: '#!/usr/bin/env node',
   },
   external: [
     'fs-extra',
@@ -23,6 +23,6 @@ export default defineConfig({
     'detect-package-manager',
     'semver',
     'cross-spawn',
-    'which'
-  ]
+    'which',
+  ],
 })

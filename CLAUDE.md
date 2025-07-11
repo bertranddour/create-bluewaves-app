@@ -52,6 +52,7 @@ This is a CLI tool called `create-bluewaves-app` that scaffolds Next.js applicat
 ### Template System
 
 Templates are organized by use case:
+
 - **minimal**: Basic setup with core components
 - **dashboard**: Admin interface with charts and tables
 - **saas**: Complete SaaS application structure
@@ -68,6 +69,7 @@ Templates are organized by use case:
 ### Build System
 
 Uses tsup for CLI bundling with:
+
 - CommonJS output for Node.js compatibility
 - Shebang banner for executable permissions
 - External dependencies to keep bundle size minimal

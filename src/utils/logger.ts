@@ -49,6 +49,10 @@ export class Logger {
   setLevel(level: LogLevel): void {
     this.level = level
   }
+
+  getLevel(): LogLevel {
+    return this.level
+  }
 }
 
 export const logger = new Logger()

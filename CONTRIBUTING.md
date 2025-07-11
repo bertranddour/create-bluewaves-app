@@ -5,17 +5,20 @@ Thank you for considering contributing to create-bluewaves-app! We welcome contr
 ## Development Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/bluewaves/create-bluewaves-app.git
    cd create-bluewaves-app
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Build the project**
+
    ```bash
    pnpm build
    ```
@@ -28,16 +31,19 @@ Thank you for considering contributing to create-bluewaves-app! We welcome contr
 ## Development Workflow
 
 1. **Development mode**
+
    ```bash
    pnpm dev
    ```
 
 2. **Type checking**
+
    ```bash
    pnpm typecheck
    ```
 
 3. **Linting**
+
    ```bash
    pnpm lint
    pnpm lint:fix
@@ -73,22 +79,26 @@ node dist/index.js my-test-app --template minimal --verbose
 ## Guidelines
 
 ### Code Style
+
 - Use TypeScript
 - Follow the existing code style
 - Use Prettier for formatting
 - Use ESLint for linting
 
 ### Testing
+
 - Write tests for new features
 - Maintain test coverage above 80%
 - Use Vitest for testing
 
 ### Commits
+
 - Use conventional commit messages
 - Keep commits focused and atomic
 - Write clear commit messages
 
 ### Pull Requests
+
 - Create feature branches from `main`
 - Write clear PR descriptions
 - Include tests for new features

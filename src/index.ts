@@ -14,7 +14,11 @@ program
   .description('🌊 Create a new Bluewaves app with Next.js + Surfer design system + shadcn/ui')
   .version(packageJson.version)
   .argument('[project-name]', 'Name of your project')
-  .option('-t, --template <template>', 'Template to use (minimal, dashboard, saas, ecommerce, landing)', 'minimal')
+  .option(
+    '-t, --template <template>',
+    'Template to use (minimal, dashboard, saas, ecommerce, landing)',
+    'minimal'
+  )
   .option('-p, --package-manager <pm>', 'Package manager to use (npm, pnpm, yarn)')
   .option('--skip-install', 'Skip package installation')
   .option('--skip-git', 'Skip git repository initialization')

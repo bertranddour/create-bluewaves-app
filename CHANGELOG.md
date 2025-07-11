@@ -5,6 +5,7 @@ All notable changes to create-bluewaves-app will be documented in this file.
 ## [1.0.0] - 2025-07-11
 
 ### Added
+
 - 🌊 **Production-ready CLI tool** for creating Next.js applications with Surfer design system
 - **Comprehensive error handling** with detailed error messages and recovery suggestions
 - **Input validation** for project names, templates, and package managers
@@ -17,6 +18,7 @@ All notable changes to create-bluewaves-app will be documented in this file.
 - **Comprehensive documentation** including contributing guidelines and API docs
 
 ### Features
+
 - **Next.js 15** with App Router and TypeScript
 - **Surfer Design System** with OKLCH colors and performance optimizations
 - **shadcn/ui** with 25+ components pre-installed in batches
@@ -27,6 +29,7 @@ All notable changes to create-bluewaves-app will be documented in this file.
 - **Git initialization** with proper commit messages
 
 ### Templates
+
 - 🚀 **Minimal** - Clean setup with core components
 - 📊 **Dashboard** - Admin interface with charts and tables
 - 💼 **SaaS** - Complete SaaS application structure
@@ -34,6 +37,7 @@ All notable changes to create-bluewaves-app will be documented in this file.
 - 🎯 **Landing Page** - Marketing site optimized for conversions
 
 ### Developer Experience
+
 - **Interactive prompts** with validation and auto-completion
 - **Package manager detection** (npm, pnpm, yarn) with fallbacks
 - **Verbose logging** option for debugging
@@ -43,6 +47,7 @@ All notable changes to create-bluewaves-app will be documented in this file.
 - **Comprehensive README** generation with next steps
 
 ### Technical Improvements
+
 - **TypeScript strict mode** enabled with proper type definitions
 - **Modular architecture** with utility functions and error handling
 - **Async/await patterns** with proper error propagation
@@ -53,6 +58,7 @@ All notable changes to create-bluewaves-app will be documented in this file.
 - **Coverage reporting** with detailed metrics
 
 ### Performance
+
 - **Bundle size optimization** with tree-shaking
 - **Component batching** to avoid CLI overflow
 - **Efficient file operations** with fs-extra
@@ -63,6 +69,7 @@ All notable changes to create-bluewaves-app will be documented in this file.
 - **Minimal external dependencies** for faster installs
 
 ### Quality Assurance
+
 - **Automated testing** with comprehensive test coverage
 - **Type safety** with strict TypeScript configuration
 - **Code quality** with ESLint and Prettier

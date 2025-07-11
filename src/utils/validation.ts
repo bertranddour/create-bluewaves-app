@@ -18,7 +18,10 @@ export function validateProjectName(name: string): void {
 
   // Additional checks
   if (name.length > 214) {
-    throw new CreateAppError('Project name is too long (max 214 characters)', 'INVALID_PROJECT_NAME')
+    throw new CreateAppError(
+      'Project name is too long (max 214 characters)',
+      'INVALID_PROJECT_NAME'
+    )
   }
 
   if (name.includes('..') || name.includes('/') || name.includes('\\')) {
@@ -47,7 +50,7 @@ export async function validateEnvironment(): Promise<void> {
 
 export async function validateProjectPath(projectPath: string): Promise<void> {
   const resolvedPath = path.resolve(projectPath)
-  
+
   // Check if path is writable
   try {
     await fs.access(path.dirname(resolvedPath), fs.constants.W_OK)
@@ -64,16 +67,12 @@ export async function validateProjectPath(projectPath: string): Promise<void> {
     const files = await fs.readdir(resolvedPath)
     if (files.length > 0) {
       // Filter out common hidden files that are safe to ignore
-      const significantFiles = files.filter(file => 
-        !file.startsWith('.') || 
-        !['.git', '.gitignore', '.DS_Store'].includes(file)
+      const significantFiles = files.filter(
+        file => !file.startsWith('.') || !['.git', '.gitignore', '.DS_Store'].includes(file)
       )
-      
+
       if (significantFiles.length > 0) {
-        throw new CreateAppError(
-          `Directory ${projectPath} is not empty`,
-          'DIRECTORY_NOT_EMPTY'
-        )
+        throw new CreateAppError(`Directory ${projectPath} is not empty`, 'DIRECTORY_NOT_EMPTY')
       }
     }
   }
@@ -81,7 +80,7 @@ export async function validateProjectPath(projectPath: string): Promise<void> {
 
 export function validateTemplate(template: string): void {
   const validTemplates = ['minimal', 'dashboard', 'saas', 'ecommerce', 'landing']
-  
+
   if (!validTemplates.includes(template)) {
     throw new CreateAppError(
       `Invalid template: ${template}. Valid templates are: ${validTemplates.join(', ')}`,
@@ -92,7 +91,7 @@ export function validateTemplate(template: string): void {
 
 export function validatePackageManager(packageManager: string): void {
   const validManagers = ['npm', 'pnpm', 'yarn']
-  
+
   if (!validManagers.includes(packageManager)) {
     throw new CreateAppError(
       `Invalid package manager: ${packageManager}. Valid options are: ${validManagers.join(', ')}`,

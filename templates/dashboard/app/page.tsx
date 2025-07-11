@@ -14,9 +14,7 @@ export default function DashboardHome() {
             Welcome to your Bluewaves dashboard. Monitor your metrics and manage your application.
           </p>
         </div>
-        <Button>
-          New Project
-        </Button>
+        <Button>New Project</Button>
       </div>
 
       {/* Metrics Cards */}
@@ -41,9 +39,7 @@ export default function DashboardHome() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2,345</div>
-            <p className="text-xs text-muted-foreground">
-              +12% from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+12% from last month</p>
           </CardContent>
         </Card>
 
@@ -65,9 +61,7 @@ export default function DashboardHome() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">$45,231</div>
-            <p className="text-xs text-muted-foreground">
-              +8% from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+8% from last month</p>
           </CardContent>
         </Card>
 
@@ -90,9 +84,7 @@ export default function DashboardHome() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              +2 from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+2 from last month</p>
           </CardContent>
         </Card>
 
@@ -114,9 +106,7 @@ export default function DashboardHome() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3.2%</div>
-            <p className="text-xs text-muted-foreground">
-              +0.5% from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+0.5% from last month</p>
           </CardContent>
         </Card>
       </div>
@@ -127,9 +117,7 @@ export default function DashboardHome() {
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
-            <CardDescription>
-              Your revenue and user growth over the last 6 months.
-            </CardDescription>
+            <CardDescription>Your revenue and user growth over the last 6 months.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -144,54 +132,36 @@ export default function DashboardHome() {
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              Latest updates from your team and projects.
-            </CardDescription>
+            <CardDescription>Latest updates from your team and projects.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    New user registered
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    2 minutes ago
-                  </p>
+                  <p className="text-sm font-medium leading-none">New user registered</p>
+                  <p className="text-xs text-muted-foreground">2 minutes ago</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Payment received
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    5 minutes ago
-                  </p>
+                  <p className="text-sm font-medium leading-none">Payment received</p>
+                  <p className="text-xs text-muted-foreground">5 minutes ago</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Project updated
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    10 minutes ago
-                  </p>
+                  <p className="text-sm font-medium leading-none">Project updated</p>
+                  <p className="text-xs text-muted-foreground">10 minutes ago</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Server alert
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    15 minutes ago
-                  </p>
+                  <p className="text-sm font-medium leading-none">Server alert</p>
+                  <p className="text-xs text-muted-foreground">15 minutes ago</p>
                 </div>
               </div>
             </div>
@@ -204,26 +174,26 @@ export default function DashboardHome() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Projects</CardTitle>
-            <CardDescription>
-              Your latest projects and their current status.
-            </CardDescription>
+            <CardDescription>Your latest projects and their current status.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {[
-                { name: "E-commerce Platform", status: "In Progress", progress: 75 },
-                { name: "Marketing Website", status: "Completed", progress: 100 },
-                { name: "Mobile App", status: "Planning", progress: 25 },
-                { name: "API Integration", status: "In Progress", progress: 60 }
+                { name: 'E-commerce Platform', status: 'In Progress', progress: 75 },
+                { name: 'Marketing Website', status: 'Completed', progress: 100 },
+                { name: 'Mobile App', status: 'Planning', progress: 25 },
+                { name: 'API Integration', status: 'In Progress', progress: 60 },
               ].map((project, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{project.name}</p>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={project.status === "Completed" ? "default" : "secondary"}>
+                      <Badge variant={project.status === 'Completed' ? 'default' : 'secondary'}>
                         {project.status}
                       </Badge>
-                      <span className="text-xs text-muted-foreground">{project.progress}% complete</span>
+                      <span className="text-xs text-muted-foreground">
+                        {project.progress}% complete
+                      </span>
                     </div>
                   </div>
                   <div className="w-24">

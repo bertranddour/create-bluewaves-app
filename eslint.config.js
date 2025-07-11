@@ -10,17 +10,17 @@ export default [
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 'latest',
-        sourceType: 'module'
+        sourceType: 'module',
       },
       globals: {
         console: 'readonly',
         process: 'readonly',
         __dirname: 'readonly',
-        require: 'readonly'
-      }
+        require: 'readonly',
+      },
     },
     plugins: {
-      '@typescript-eslint': tsPlugin
+      '@typescript-eslint': tsPlugin,
     },
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
@@ -29,10 +29,10 @@ export default [
       'no-console': 'off', // Allow console in CLI tool
       'prefer-const': 'error',
       'no-var': 'error',
-      'no-unused-vars': 'off' // Use typescript version instead
-    }
+      'no-unused-vars': 'off', // Use typescript version instead
+    },
   },
   {
-    ignores: ['dist/', 'node_modules/', 'coverage/', '*.config.js', 'templates/']
-  }
+    ignores: ['dist/', 'node_modules/', 'coverage/', '*.config.js', 'templates/'],
+  },
 ]

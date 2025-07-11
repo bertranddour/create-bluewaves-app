@@ -5,7 +5,12 @@ import path from 'path'
 import fs from 'fs-extra'
 import { execa } from 'execa'
 import { CreateAppError, handleError } from './utils/errors'
-import { validateProjectName, validateEnvironment, validateProjectPath, validateTemplate } from './utils/validation'
+import {
+  validateProjectName,
+  validateEnvironment,
+  validateProjectPath,
+  validateTemplate,
+} from './utils/validation'
 import { getPackageManagerInfo, validatePackageManagerVersion } from './utils/package-manager'
 import { logger, LogLevel } from './utils/logger'
 import { detect } from 'detect-package-manager'
@@ -46,8 +51,8 @@ export async function createBluewavesApp(projectName: string, options: CreateApp
             } catch (error) {
               return error instanceof CreateAppError ? error.message : 'Invalid project name'
             }
-          }
-        }
+          },
+        },
       ])
       projectName = name
     }
@@ -66,30 +71,35 @@ export async function createBluewavesApp(projectName: string, options: CreateApp
             type: 'confirm',
             name: 'overwrite',
             message: `Directory ${projectName} already exists. Do you want to overwrite it?`,
-            default: false
-          }
+            default: false,
+          },
         ])
-        
+
         if (!overwrite) {
           logger.warn('Operation cancelled by user')
           process.exit(0)
         }
-        
-        logger.step('Removing existing directory...')
-        await fs.remove(projectPath)
+
+        logger.step('Cleaning existing directory...')
+        await cleanDirectory(projectPath)
       } else {
         throw error
       }
     }
 
+    // Validate provided options early
+    if (options.template) {
+      validateTemplate(options.template)
+    }
+
     // Get configuration
     const config = await getProjectConfiguration(options)
-    
-    // Validate configuration
+
+    // Validate final configuration
     validateTemplate(config.template)
     const packageManagerInfo = await getPackageManagerInfo(config.packageManager)
     await validatePackageManagerVersion(packageManagerInfo.name)
-  
+
     console.log()
     console.log(chalk.blue('🏄‍♂️ Creating your Bluewaves app...'))
     console.log(chalk.gray(`Project: ${projectName}`))
@@ -138,7 +148,6 @@ export async function createBluewavesApp(projectName: string, options: CreateApp
 
       // Success message
       printSuccessMessage(projectName, config)
-
     } catch (error) {
       if (spinner) {
         spinner.fail('Failed to create Bluewaves app')
@@ -165,9 +174,9 @@ async function getProjectConfiguration(options: CreateAppOptions) {
         { name: '📊 Dashboard - Admin interface with charts and tables', value: 'dashboard' },
         { name: '💼 SaaS - Complete SaaS application template', value: 'saas' },
         { name: '🛍️ E-commerce - Online store with product management', value: 'ecommerce' },
-        { name: '🎯 Landing Page - Marketing site with conversion focus', value: 'landing' }
+        { name: '🎯 Landing Page - Marketing site with conversion focus', value: 'landing' },
       ],
-      default: 'minimal'
+      default: 'minimal',
     })
   }
 
@@ -181,9 +190,9 @@ async function getProjectConfiguration(options: CreateAppOptions) {
       choices: [
         { name: 'pnpm (recommended)', value: 'pnpm' },
         { name: 'npm', value: 'npm' },
-        { name: 'yarn', value: 'yarn' }
+        { name: 'yarn', value: 'yarn' },
       ],
-      default: detected || 'pnpm'
+      default: detected || 'pnpm',
     })
   }
 
@@ -191,15 +200,22 @@ async function getProjectConfiguration(options: CreateAppOptions) {
 
   return {
     template: options.template || answers.template || 'minimal',
-    packageManager: options.packageManager || 
-                   (options.useNpm ? 'npm' : options.usePnpm ? 'pnpm' : options.useYarn ? 'yarn' : answers.packageManager || 'pnpm'),
+    packageManager:
+      options.packageManager ||
+      (options.useNpm
+        ? 'npm'
+        : options.usePnpm
+          ? 'pnpm'
+          : options.useYarn
+            ? 'yarn'
+            : answers.packageManager || 'pnpm'),
     skipInstall: options.skipInstall || false,
     skipGit: options.skipGit || false,
-    verbose: options.verbose || false
+    verbose: options.verbose || false,
   }
 }
 
-function getPackageManagerRunner(packageManager: string) {
+export function getPackageManagerRunner(packageManager: string) {
   switch (packageManager) {
     case 'pnpm':
       return { command: 'pnpm', args: ['dlx'] }
@@ -213,6 +229,20 @@ function getPackageManagerRunner(packageManager: string) {
   }
 }
 
+async function cleanDirectory(dirPath: string) {
+  const items = await fs.readdir(dirPath)
+
+  for (const item of items) {
+    // Preserve .git directory
+    if (item === '.git') {
+      continue
+    }
+
+    const itemPath = path.join(dirPath, item)
+    await fs.remove(itemPath)
+  }
+}
+
 async function createNextJsApp(projectName: string, config: any, _spinner: any) {
   // Use create-next-app with latest version and optimal settings
   const createNextCommand = [
@@ -222,15 +252,14 @@ async function createNextJsApp(projectName: string, config: any, _spinner: any) 
     '--tailwind',
     '--eslint',
     '--app',
-    '--src-dir',
-    '--import-alias', '@/*',
-    '--yes'
+    '--turbopack',
+    '--yes',
   ]
 
   // Use the appropriate package manager runner
   const runner = getPackageManagerRunner(config.packageManager)
   await execa(runner.command, [...runner.args, ...createNextCommand], {
-    stdio: config.verbose ? 'inherit' : 'pipe'
+    stdio: config.verbose ? 'inherit' : 'pipe',
   })
 }
 
@@ -239,50 +268,20 @@ async function setupShadcnUI(projectPath: string, config: any, _spinner: any) {
   const runner = getPackageManagerRunner(config.packageManager)
 
   // Initialize shadcn/ui
-  await execa(runner.command, [...runner.args, 'shadcn@latest', 'init', '--yes', '--defaults'], {
-    cwd,
-    stdio: config.verbose ? 'inherit' : 'pipe'
-  })
-
-  // Install core shadcn/ui components
-  const coreComponents = [
-    'button',
-    'card',
-    'input',
-    'label',
-    'badge',
-    'avatar',
-    'dropdown-menu',
-    'navigation-menu',
-    'sheet',
-    'toast',
-    'dialog',
-    'select',
-    'switch',
-    'tabs',
-    'tooltip',
-    'accordion',
-    'alert',
-    'checkbox',
-    'form',
-    'popover',
-    'progress',
-    'radio-group',
-    'separator',
-    'slider',
-    'table',
-    'textarea'
-  ]
-
-  // Install components in batches to avoid overwhelming the CLI
-  const batchSize = 5
-  for (let i = 0; i < coreComponents.length; i += batchSize) {
-    const batch = coreComponents.slice(i, i + batchSize)
-    await execa(runner.command, [...runner.args, 'shadcn@latest', 'add', ...batch, '--yes'], {
+  await execa(
+    runner.command,
+    [...runner.args, 'shadcn@latest', 'init', '--yes', '--no-src-dir', '--base-color', 'neutral'],
+    {
       cwd,
-      stdio: config.verbose ? 'inherit' : 'pipe'
-    })
-  }
+      stdio: config.verbose ? 'inherit' : 'pipe',
+    }
+  )
+
+  // Install all shadcn/ui components
+  await execa(runner.command, [...runner.args, 'shadcn@latest', 'add', '--all'], {
+    cwd,
+    stdio: config.verbose ? 'inherit' : 'pipe',
+  })
 }
 
 async function installSurferDesignSystem(projectPath: string, config: any, _spinner: any) {
@@ -297,8 +296,8 @@ async function installSurferDesignSystem(projectPath: string, config: any, _spin
     '@bluewaves/surfer': '^1.0.0',
     'framer-motion': '^11.0.0',
     'next-themes': '^0.4.6',
-    'sonner': '^2.0.6',
-    'zod': '^4.0.5'
+    sonner: '^2.0.6',
+    zod: '^4.0.5',
   }
 
   await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 })
@@ -310,9 +309,9 @@ import { surferPreset } from '@bluewaves/surfer/tailwind'
 
 const config: Config = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@bluewaves/surfer/**/*.{js,ts,jsx,tsx}'
   ],
   presets: [surferPreset],
@@ -332,7 +331,7 @@ export default config`
   await fs.writeFile(tailwindConfigPath, surferTailwindConfig)
 
   // Update globals.css to import Surfer styles
-  const globalsCssPath = path.join(cwd, 'src/app/globals.css')
+  const globalsCssPath = path.join(cwd, 'app/globals.css')
   const surferGlobalsCss = `@import '@bluewaves/surfer/css';
 @import 'tailwindcss';
 
@@ -346,13 +345,13 @@ export default config`
     template: config.template,
     nextjs: {
       version: '15.x',
-      appRouter: true
+      appRouter: true,
     },
     customizations: {
       colors: {},
       fonts: {},
-      components: {}
-    }
+      components: {},
+    },
   }
 
   await fs.writeJson(path.join(cwd, 'surfer.config.json'), surferConfig, { spaces: 2 })
@@ -364,7 +363,7 @@ async function setupProjectTemplate(projectPath: string, config: any, _spinner: 
 
   // Copy template files if they exist
   if (await fs.pathExists(templatePath)) {
-    await fs.copy(templatePath, path.join(cwd, 'src'))
+    await fs.copy(templatePath, cwd)
   } else {
     // Create basic template
     await createBasicTemplate(cwd, config.template)
@@ -372,7 +371,7 @@ async function setupProjectTemplate(projectPath: string, config: any, _spinner: 
 }
 
 async function createBasicTemplate(projectPath: string, template: string) {
-  const appPath = path.join(projectPath, 'src/app')
+  const appPath = path.join(projectPath, 'app')
 
   // Create enhanced page.tsx based on template
   const pageContent = getTemplatePageContent(template)
@@ -497,7 +496,7 @@ function getTemplateCards(template: string): string {
               </p>
             </CardContent>
           </Card>`,
-    
+
     dashboard: `
           <Card>
             <CardHeader>
@@ -570,7 +569,7 @@ function getTemplateCards(template: string): string {
                 Transactional emails, in-app notifications, and user onboarding.
               </p>
             </CardContent>
-          </Card>`
+          </Card>`,
   }
 
   return cards[template as keyof typeof cards] || cards.minimal
@@ -579,7 +578,7 @@ function getTemplateCards(template: string): string {
 async function installDependencies(projectPath: string, config: any, _spinner: any) {
   await execa(config.packageManager, ['install'], {
     cwd: projectPath,
-    stdio: config.verbose ? 'inherit' : 'pipe'
+    stdio: config.verbose ? 'inherit' : 'pipe',
   })
 }
 
@@ -587,9 +586,13 @@ async function initializeGit(projectPath: string, config: any, _spinner: any) {
   try {
     await execa('git', ['init'], { cwd: projectPath })
     await execa('git', ['add', '.'], { cwd: projectPath })
-    await execa('git', ['commit', '-m', '🌊 Initial commit: Bluewaves app with Surfer design system'], { 
-      cwd: projectPath 
-    })
+    await execa(
+      'git',
+      ['commit', '-m', '🌊 Initial commit: Bluewaves app with Surfer design system'],
+      {
+        cwd: projectPath,
+      }
+    )
   } catch (error) {
     // Git initialization is optional
     if (config.verbose) {
@@ -638,10 +641,10 @@ ${config.packageManager} start
 Edit \`surfer.config.json\` to customize your design tokens.
 
 ### Components
-All shadcn/ui components are in \`src/components/ui/\` - customize as needed.
+All shadcn/ui components are in \`components/ui/\` - customize as needed.
 
 ### Styling
-Global styles are in \`src/app/globals.css\` with Surfer design system.
+Global styles are in \`app/globals.css\` with Surfer design system.
 
 ## 🏄‍♂️ Surfer Commands
 

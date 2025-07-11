@@ -21,9 +21,9 @@ describe('errors', () => {
     it('should handle CreateAppError', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const error = new CreateAppError('Test message', 'TEST_CODE')
-      
+
       handleError(error)
-      
+
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('❌ Test message'))
       consoleSpy.mockRestore()
     })
@@ -31,19 +31,23 @@ describe('errors', () => {
     it('should handle generic Error', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const error = new Error('Generic error')
-      
+
       handleError(error)
-      
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('❌ An unexpected error occurred:'))
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('❌ An unexpected error occurred:')
+      )
       consoleSpy.mockRestore()
     })
 
     it('should handle unknown error', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-      
+
       handleError('String error')
-      
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('❌ An unknown error occurred'))
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('❌ An unknown error occurred')
+      )
       consoleSpy.mockRestore()
     })
   })

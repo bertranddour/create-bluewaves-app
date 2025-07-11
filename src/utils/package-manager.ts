@@ -17,20 +17,20 @@ export async function getPackageManagerInfo(preferred?: string): Promise<Package
       name: 'npm',
       installCommand: ['install'],
       runCommand: (script: string) => ['run', script],
-      isAvailable: false
+      isAvailable: false,
     },
     pnpm: {
       name: 'pnpm',
       installCommand: ['install'],
       runCommand: (script: string) => ['run', script],
-      isAvailable: false
+      isAvailable: false,
     },
     yarn: {
       name: 'yarn',
       installCommand: ['install'],
       runCommand: (script: string) => [script],
-      isAvailable: false
-    }
+      isAvailable: false,
+    },
   }
 
   // Check availability
@@ -44,14 +44,22 @@ export async function getPackageManagerInfo(preferred?: string): Promise<Package
   }
 
   // Use preferred if available
-  if (preferred && preferred in managers && managers[preferred as keyof typeof managers].isAvailable) {
+  if (
+    preferred &&
+    preferred in managers &&
+    managers[preferred as keyof typeof managers].isAvailable
+  ) {
     return managers[preferred as keyof typeof managers]
   }
 
   // Auto-detect
   try {
     const detected = await detect()
-    if (detected && detected in managers && managers[detected as keyof typeof managers].isAvailable) {
+    if (
+      detected &&
+      detected in managers &&
+      managers[detected as keyof typeof managers].isAvailable
+    ) {
       logger.debug(`Auto-detected package manager: ${detected}`)
       return managers[detected as keyof typeof managers]
     }
