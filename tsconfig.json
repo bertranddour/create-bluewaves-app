@@ -22,11 +22,12 @@
     }
   },
   "include": [
-    "src/**/*",
-    "templates/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "templates",
+    "tests"
   ]
 }

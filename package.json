@@ -10,10 +10,16 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write .",
-    "prepublishOnly": "pnpm build"
+    "format:check": "prettier --check .",
+    "clean": "rm -rf dist",
+    "prepack": "pnpm clean && pnpm build",
+    "prepublishOnly": "pnpm test && pnpm typecheck && pnpm lint"
   },
   "files": [
     "dist",
@@ -43,19 +49,20 @@
   "author": "Bluewaves <hello@bluewaves.ai>",
   "license": "MIT",
   "dependencies": {
-    "commander": "^12.0.0",
-    "inquirer": "^10.0.0",
     "chalk": "^5.3.0",
-    "ora": "^8.0.0",
+    "commander": "^12.0.0",
+    "cross-spawn": "^7.0.3",
+    "detect-package-manager": "^3.0.0",
     "execa": "^8.0.0",
     "fs-extra": "^11.2.0",
-    "validate-npm-package-name": "^5.0.0",
-    "detect-package-manager": "^3.0.0",
+    "inquirer": "^10.0.0",
+    "ora": "^8.0.0",
     "semver": "^7.6.0",
-    "cross-spawn": "^7.0.3",
+    "validate-npm-package-name": "^5.0.0",
     "which": "^4.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.31.0",
     "@types/cross-spawn": "^6.0.6",
     "@types/fs-extra": "^11.0.4",
     "@types/inquirer": "^9.0.7",
@@ -63,7 +70,12 @@
     "@types/semver": "^7.5.8",
     "@types/validate-npm-package-name": "^4.0.2",
     "@types/which": "^3.0.4",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.5.1",
     "prettier": "^3.3.0",
     "tsup": "^8.0.0",
     "typescript": "^5.8.0",
@@ -74,5 +86,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/bluewaves"
   }
 }

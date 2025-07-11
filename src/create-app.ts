@@ -4,9 +4,11 @@ import ora from 'ora'
 import path from 'path'
 import fs from 'fs-extra'
 import { execa } from 'execa'
-import validateNpmName from 'validate-npm-package-name'
-import { detectPackageManager } from 'detect-package-manager'
-import which from 'which'
+import { CreateAppError, handleError } from './utils/errors'
+import { validateProjectName, validateEnvironment, validateProjectPath, validateTemplate } from './utils/validation'
+import { getPackageManagerInfo, validatePackageManagerVersion } from './utils/package-manager'
+import { logger, LogLevel } from './utils/logger'
+import { detect } from 'detect-package-manager'
 
 interface CreateAppOptions {
   template?: string
@@ -20,108 +22,132 @@ interface CreateAppOptions {
 }
 
 export async function createBluewavesApp(projectName: string, options: CreateAppOptions) {
-  // Get project name if not provided
-  if (!projectName) {
-    const { name } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'name',
-        message: 'What is your project name?',
-        default: 'my-bluewaves-app',
-        validate: (input: string) => {
-          const validation = validateNpmName(input)
-          if (!validation.validForNewPackages) {
-            return validation.errors?.[0] || 'Invalid project name'
-          }
-          return true
-        }
-      }
-    ])
-    projectName = name
-  }
-
-  // Validate project name
-  const validation = validateNpmName(projectName)
-  if (!validation.validForNewPackages) {
-    console.error(chalk.red('❌ Invalid project name:'), validation.errors?.[0])
-    process.exit(1)
-  }
-
-  // Check if directory already exists
-  const projectPath = path.resolve(projectName)
-  if (await fs.pathExists(projectPath)) {
-    const { overwrite } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'overwrite',
-        message: `Directory ${projectName} already exists. Do you want to overwrite it?`,
-        default: false
-      }
-    ])
-    
-    if (!overwrite) {
-      console.log(chalk.yellow('🛑 Aborted'))
-      process.exit(0)
-    }
-    
-    await fs.remove(projectPath)
-  }
-
-  // Get configuration
-  const config = await getProjectConfiguration(options)
-  
-  console.log()
-  console.log(chalk.blue('🏄‍♂️ Creating your Bluewaves app...'))
-  console.log(chalk.gray(`Project: ${projectName}`))
-  console.log(chalk.gray(`Template: ${config.template}`))
-  console.log(chalk.gray(`Package Manager: ${config.packageManager}`))
-  console.log()
-
-  const startTime = Date.now()
-  let spinner = ora('Setting up project...').start()
-
   try {
-    // Step 1: Create Next.js app
-    spinner.text = '🚀 Creating Next.js application...'
-    await createNextJsApp(projectName, config, spinner)
-
-    // Step 2: Setup shadcn/ui
-    spinner.text = '🎨 Installing shadcn/ui...'
-    await setupShadcnUI(projectPath, config, spinner)
-
-    // Step 3: Install Surfer design system
-    spinner.text = '🏄‍♂️ Installing Surfer design system...'
-    await installSurferDesignSystem(projectPath, config, spinner)
-
-    // Step 4: Setup project template
-    spinner.text = `📄 Setting up ${config.template} template...`
-    await setupProjectTemplate(projectPath, config, spinner)
-
-    // Step 5: Install dependencies
-    if (!config.skipInstall) {
-      spinner.text = '📦 Installing dependencies...'
-      await installDependencies(projectPath, config, spinner)
+    // Set up logging
+    if (options.verbose) {
+      logger.setLevel(LogLevel.DEBUG)
     }
 
-    // Step 6: Initialize git
-    if (!config.skipGit) {
-      spinner.text = '📝 Initializing git repository...'
-      await initializeGit(projectPath, config, spinner)
+    // Validate environment
+    await validateEnvironment()
+
+    // Get project name if not provided
+    if (!projectName) {
+      const { name } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'What is your project name?',
+          default: 'my-bluewaves-app',
+          validate: (input: string) => {
+            try {
+              validateProjectName(input)
+              return true
+            } catch (error) {
+              return error instanceof CreateAppError ? error.message : 'Invalid project name'
+            }
+          }
+        }
+      ])
+      projectName = name
     }
 
-    // Step 7: Final setup
-    spinner.text = '✨ Final touches...'
-    await finalSetup(projectPath, config, spinner)
+    // Validate project name
+    validateProjectName(projectName)
 
-    const duration = ((Date.now() - startTime) / 1000).toFixed(1)
-    spinner.succeed(`🎉 Created ${projectName} in ${duration}s`)
+    // Validate project path
+    const projectPath = path.resolve(projectName)
+    try {
+      await validateProjectPath(projectPath)
+    } catch (error) {
+      if (error instanceof CreateAppError && error.code === 'DIRECTORY_NOT_EMPTY') {
+        const { overwrite } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'overwrite',
+            message: `Directory ${projectName} already exists. Do you want to overwrite it?`,
+            default: false
+          }
+        ])
+        
+        if (!overwrite) {
+          logger.warn('Operation cancelled by user')
+          process.exit(0)
+        }
+        
+        logger.step('Removing existing directory...')
+        await fs.remove(projectPath)
+      } else {
+        throw error
+      }
+    }
 
-    // Success message
-    printSuccessMessage(projectName, config)
+    // Get configuration
+    const config = await getProjectConfiguration(options)
+    
+    // Validate configuration
+    validateTemplate(config.template)
+    const packageManagerInfo = await getPackageManagerInfo(config.packageManager)
+    await validatePackageManagerVersion(packageManagerInfo.name)
+  
+    console.log()
+    console.log(chalk.blue('🏄‍♂️ Creating your Bluewaves app...'))
+    console.log(chalk.gray(`Project: ${projectName}`))
+    console.log(chalk.gray(`Template: ${config.template}`))
+    console.log(chalk.gray(`Package Manager: ${config.packageManager}`))
+    console.log()
 
+    const startTime = Date.now()
+    const spinner = ora('Setting up project...').start()
+
+    try {
+      // Step 1: Create Next.js app
+      spinner.text = '🚀 Creating Next.js application...'
+      await createNextJsApp(projectName, config, spinner)
+
+      // Step 2: Setup shadcn/ui
+      spinner.text = '🎨 Installing shadcn/ui...'
+      await setupShadcnUI(projectPath, config, spinner)
+
+      // Step 3: Install Surfer design system
+      spinner.text = '🏄‍♂️ Installing Surfer design system...'
+      await installSurferDesignSystem(projectPath, config, spinner)
+
+      // Step 4: Setup project template
+      spinner.text = `📄 Setting up ${config.template} template...`
+      await setupProjectTemplate(projectPath, config, spinner)
+
+      // Step 5: Install dependencies
+      if (!config.skipInstall) {
+        spinner.text = '📦 Installing dependencies...'
+        await installDependencies(projectPath, config, spinner)
+      }
+
+      // Step 6: Initialize git
+      if (!config.skipGit) {
+        spinner.text = '📝 Initializing git repository...'
+        await initializeGit(projectPath, config, spinner)
+      }
+
+      // Step 7: Final setup
+      spinner.text = '✨ Final touches...'
+      await finalSetup(projectPath, config, spinner)
+
+      const duration = ((Date.now() - startTime) / 1000).toFixed(1)
+      spinner.succeed(`🎉 Created ${projectName} in ${duration}s`)
+
+      // Success message
+      printSuccessMessage(projectName, config)
+
+    } catch (error) {
+      if (spinner) {
+        spinner.fail('Failed to create Bluewaves app')
+      }
+      throw error
+    }
   } catch (error) {
-    spinner.fail('Failed to create Bluewaves app')
-    throw error
+    handleError(error, options.verbose)
+    process.exit(1)
   }
 }
 
@@ -147,7 +173,7 @@ async function getProjectConfiguration(options: CreateAppOptions) {
 
   // Package manager selection
   if (!options.packageManager && !options.useNpm && !options.usePnpm && !options.useYarn) {
-    const detected = await detectPackageManager().catch(() => 'pnpm')
+    const detected = await detect().catch(() => 'pnpm')
     questions.push({
       type: 'list',
       name: 'packageManager',
@@ -161,7 +187,7 @@ async function getProjectConfiguration(options: CreateAppOptions) {
     })
   }
 
-  const answers = await inquirer.prompt(questions)
+  const answers = questions.length > 0 ? await inquirer.prompt(questions as any) : {}
 
   return {
     template: options.template || answers.template || 'minimal',
@@ -173,7 +199,7 @@ async function getProjectConfiguration(options: CreateAppOptions) {
   }
 }
 
-async function createNextJsApp(projectName: string, config: any, spinner: ora.Ora) {
+async function createNextJsApp(projectName: string, config: any, _spinner: any) {
   // Use create-next-app with latest version and optimal settings
   const createNextCommand = [
     'create-next-app@latest',
@@ -191,7 +217,7 @@ async function createNextJsApp(projectName: string, config: any, spinner: ora.Or
   })
 }
 
-async function setupShadcnUI(projectPath: string, config: any, spinner: ora.Ora) {
+async function setupShadcnUI(projectPath: string, config: any, _spinner: any) {
   const cwd = projectPath
 
   // Initialize shadcn/ui
@@ -241,7 +267,7 @@ async function setupShadcnUI(projectPath: string, config: any, spinner: ora.Ora)
   }
 }
 
-async function installSurferDesignSystem(projectPath: string, config: any, spinner: ora.Ora) {
+async function installSurferDesignSystem(projectPath: string, config: any, _spinner: any) {
   const cwd = projectPath
 
   // Add Surfer design system to package.json
@@ -314,7 +340,7 @@ export default config`
   await fs.writeJson(path.join(cwd, 'surfer.config.json'), surferConfig, { spaces: 2 })
 }
 
-async function setupProjectTemplate(projectPath: string, config: any, spinner: ora.Ora) {
+async function setupProjectTemplate(projectPath: string, config: any, _spinner: any) {
   const templatePath = path.join(__dirname, '..', 'templates', config.template)
   const cwd = projectPath
 
@@ -532,14 +558,14 @@ function getTemplateCards(template: string): string {
   return cards[template as keyof typeof cards] || cards.minimal
 }
 
-async function installDependencies(projectPath: string, config: any, spinner: ora.Ora) {
+async function installDependencies(projectPath: string, config: any, _spinner: any) {
   await execa(config.packageManager, ['install'], {
     cwd: projectPath,
     stdio: config.verbose ? 'inherit' : 'pipe'
   })
 }
 
-async function initializeGit(projectPath: string, config: any, spinner: ora.Ora) {
+async function initializeGit(projectPath: string, config: any, _spinner: any) {
   try {
     await execa('git', ['init'], { cwd: projectPath })
     await execa('git', ['add', '.'], { cwd: projectPath })
@@ -554,7 +580,7 @@ async function initializeGit(projectPath: string, config: any, spinner: ora.Ora)
   }
 }
 
-async function finalSetup(projectPath: string, config: any, spinner: ora.Ora) {
+async function finalSetup(projectPath: string, config: any, _spinner: any) {
   // Create a README with next steps
   const readmeContent = `# ${path.basename(projectPath)}
 

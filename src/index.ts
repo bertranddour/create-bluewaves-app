@@ -1,14 +1,5 @@
-#!/usr/bin/env node
-
 import { program } from 'commander'
-import inquirer from 'inquirer'
 import chalk from 'chalk'
-import ora from 'ora'
-import path from 'path'
-import fs from 'fs-extra'
-import { execa } from 'execa'
-import validateNpmName from 'validate-npm-package-name'
-import { detectPackageManager } from 'detect-package-manager'
 import { createBluewavesApp } from './create-app'
 
 const packageJson = require('../package.json')
