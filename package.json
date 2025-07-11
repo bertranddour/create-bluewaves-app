@@ -1,0 +1,78 @@
+{
+  "name": "create-bluewaves-app",
+  "version": "1.0.0",
+  "description": "🌊 Create a new Bluewaves app with Next.js + Surfer design system + shadcn/ui in one command",
+  "main": "dist/index.js",
+  "bin": {
+    "create-bluewaves-app": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepublishOnly": "pnpm build"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "nextjs",
+    "shadcn-ui",
+    "surfer",
+    "bluewaves",
+    "design-system",
+    "typescript",
+    "tailwind",
+    "create-app",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bluewaves/create-bluewaves-app"
+  },
+  "homepage": "https://bluewaves.ai",
+  "bugs": {
+    "url": "https://github.com/bluewaves/create-bluewaves-app/issues"
+  },
+  "author": "Bluewaves <hello@bluewaves.ai>",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "inquirer": "^10.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.0",
+    "execa": "^8.0.0",
+    "fs-extra": "^11.2.0",
+    "validate-npm-package-name": "^5.0.0",
+    "detect-package-manager": "^3.0.0",
+    "semver": "^7.6.0",
+    "cross-spawn": "^7.0.3",
+    "which": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^24.0.0",
+    "@types/semver": "^7.5.8",
+    "@types/validate-npm-package-name": "^4.0.2",
+    "@types/which": "^3.0.4",
+    "eslint": "^9.0.0",
+    "prettier": "^3.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
