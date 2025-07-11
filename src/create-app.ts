@@ -199,29 +199,47 @@ async function getProjectConfiguration(options: CreateAppOptions) {
   }
 }
 
+function getPackageManagerRunner(packageManager: string) {
+  switch (packageManager) {
+    case 'pnpm':
+      return { command: 'pnpm', args: ['dlx'] }
+    case 'yarn':
+      return { command: 'yarn', args: ['dlx'] }
+    case 'bun':
+      return { command: 'bunx', args: ['--bun'] }
+    case 'npm':
+    default:
+      return { command: 'npx', args: [] }
+  }
+}
+
 async function createNextJsApp(projectName: string, config: any, _spinner: any) {
   // Use create-next-app with latest version and optimal settings
   const createNextCommand = [
     'create-next-app@latest',
     projectName,
-    '--typescript',
+    '--ts',
     '--tailwind',
     '--eslint',
     '--app',
     '--src-dir',
-    '--import-alias', '@/*'
+    '--import-alias', '@/*',
+    '--yes'
   ]
 
-  await execa('npx', createNextCommand, {
+  // Use the appropriate package manager runner
+  const runner = getPackageManagerRunner(config.packageManager)
+  await execa(runner.command, [...runner.args, ...createNextCommand], {
     stdio: config.verbose ? 'inherit' : 'pipe'
   })
 }
 
 async function setupShadcnUI(projectPath: string, config: any, _spinner: any) {
   const cwd = projectPath
+  const runner = getPackageManagerRunner(config.packageManager)
 
   // Initialize shadcn/ui
-  await execa('npx', ['shadcn@latest', 'init', '--yes', '--style', 'new-york'], {
+  await execa(runner.command, [...runner.args, 'shadcn@latest', 'init', '--yes', '--defaults'], {
     cwd,
     stdio: config.verbose ? 'inherit' : 'pipe'
   })
@@ -260,7 +278,7 @@ async function setupShadcnUI(projectPath: string, config: any, _spinner: any) {
   const batchSize = 5
   for (let i = 0; i < coreComponents.length; i += batchSize) {
     const batch = coreComponents.slice(i, i + batchSize)
-    await execa('npx', ['shadcn@latest', 'add', ...batch, '--yes'], {
+    await execa(runner.command, [...runner.args, 'shadcn@latest', 'add', ...batch, '--yes'], {
       cwd,
       stdio: config.verbose ? 'inherit' : 'pipe'
     })
